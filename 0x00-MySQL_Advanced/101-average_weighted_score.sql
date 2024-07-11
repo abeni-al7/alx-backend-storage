@@ -1,3 +1,4 @@
+-- A stored procedure that computes all weighted averages
 DELIMITER $$
 
 CREATE PROCEDURE ComputeAverageWeightedScoreForUsers()
