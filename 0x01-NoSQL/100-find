@@ -1,0 +1,2 @@
+// find all docs that matches a regex
+db.school.find({ name: /Holberton.*/ })
