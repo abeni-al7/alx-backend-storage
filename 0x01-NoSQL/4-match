@@ -1,0 +1,2 @@
+// query a database by property
+db.school.find({name="Holberton school"}, {name: 1, id: 1})
