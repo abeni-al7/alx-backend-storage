@@ -3,15 +3,10 @@
 from pymongo import MongoClient
 
 
-# connect to the database
 client = MongoClient('mongodb://127.0.0.1:27017')
-
-# get the database
 db = client.logs
-
-# get the collection
 collection = db.nginx
-# get the number of documents
+
 nb_of_docs = collection.count_documents({})
 get_count = collection.count_documents({"method": "GET"})
 post_count = collection.count_documents({"method": "POST"})
