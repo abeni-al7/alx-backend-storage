@@ -2,7 +2,7 @@
 '''A module for a Cache class'''
 import redis
 import uuid
-from typing import Union, Callable
+from typing import Union, Callable, Optional
 
 
 class Cache:
@@ -18,14 +18,14 @@ class Cache:
         self._redis.set(key, data)
         return key
 
-    def get(self, key: str, fn: Callable) -> any:
+    def get(self, key: str, fn: Optional[Callable]) -> Union[str, bytes, int, float, list, None]:
         '''Gets data from redis and converts it to fn'''
-        try:
-            if fn != None:
-                return fn(self._redis.get(key))
-            return self._redis.get(key)
-        except Exception:
+        data = self._redis.get(key)
+        if data is None:
             return None
+        if fn is not None:
+            return fn(data)
+        return data
 
     def get_str(self, key: str) -> Union[str, None]:
         '''Gets a string data from redis'''
