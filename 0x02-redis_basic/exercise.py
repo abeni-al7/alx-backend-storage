@@ -30,13 +30,13 @@ class Cache:
     def get_str(self, key: str) -> Union[str, None]:
         '''Gets a string data from redis'''
         try:
-            return str(self.get(key))
+            return self.get(key, fn=lambda d: d.decode('utf-8'))
         except Exception:
             return None
 
     def get_int(self, key: str) -> Union[int, None]:
         '''Gets an int data from redis'''
         try:
-            return int(self.get(key))
+            return self.get(key, fn=int)
         except Exception:
             return None
