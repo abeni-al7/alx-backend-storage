@@ -9,12 +9,16 @@ from functools import wraps
 def replay(method: Callable) -> None:
     '''Prints information about the history of method'''
     r = redis.Redis()
-    count = int(r.get(method.__qualname__))
-    print(f"{method.__qualname__} was called {str(count)} times:")
-    inputs = r.lrange(f'{method.__qualname__}:inputs', 0, -1)
-    outputs = r.lrange(f'{method.__qualname__}:outputs', 0, -1)
+    m_name = method.__qualname__
+    count = int(r.get(m_name))
+    print(f"{m_name} was called {str(count)} times:")
+    inputs = r.lrange(f'{m_name}:inputs', 0, -1)
+    outputs = r.lrange(f'{m_name}:outputs', 0, -1)
     for input, output in zip(inputs, outputs):
-        print(f'{method.__qualname__}(*{(input.decode("utf-8"))}) -> {output.decode("utf-8")}')
+        print(
+            f'{m_name}(*{(input.decode("utf-8"))}) -> {output.decode("utf-8")}'
+            )
+
 
 def call_history(method: Callable) -> Callable:
     '''A decorator to store inputs and outputs of method'''
@@ -30,6 +34,7 @@ def call_history(method: Callable) -> Callable:
         return output
     return wrapper
 
+
 def count_calls(method: Callable) -> Callable:
     '''A decorator to count calls'''
     key = method.__qualname__
@@ -40,6 +45,7 @@ def count_calls(method: Callable) -> Callable:
         self._redis.incr(key)
         return method(self, *args, **kwargs)
     return wrapper
+
 
 class Cache:
     '''A Cache class'''
@@ -56,7 +62,9 @@ class Cache:
         self._redis.set(key, data)
         return key
 
-    def get(self, key: str, fn: Callable = None) -> Union[str, bytes, int, float, list, None]:
+    def get(self, key: str, fn: Callable = None) -> Union[
+                                            str, bytes, int, float, list, None
+                                                    ]:
         '''Gets data from redis and converts it to fn'''
         data = self._redis.get(key)
         if fn:
