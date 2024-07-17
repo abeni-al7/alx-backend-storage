@@ -6,14 +6,14 @@ from typing import Union
 
 
 class Cache:
-    '''A cache class'''
+    '''A Cache class'''
     def __init__(self):
         '''Initializing method'''
         self._redis = redis.Redis()
         self._redis.flushdb()
 
-    def store(self, data: Union[int, bytes, float, str]) -> str:
-        '''Stores an input data into redis and returns the random key'''
+    def store(self, data: Union[str, bytes, int, float]) -> str:
+        '''Stores data to redis and returns the random key'''
         key = str(uuid.uuid4())
         self._redis.set(key, data)
         return key
