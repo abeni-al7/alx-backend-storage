@@ -8,19 +8,20 @@ from typing import Callable
 r = redis.Redis()
 
 
-def count_calls(fn: Callable, expiration: int = 10) -> Callable:
+def count_calls(fn: Callable) -> Callable:
     '''Decorator for counting the number of calls to fn'''
     @wraps(fn)
     def wrapper(url):
         '''Increments count of calls in redis'''
-        key = 'count:' + url
-        r.incr(key)
         page = r.get(url)
         if page:
             return page.decode('utf-8')
 
+        key = 'count:' + url
         result = fn(url)
-        r.setex(url, expiration, result)
+        r.incr(key)
+        r.set(url, result, ex=10)
+        r.expire(url, 10)
         return result
     return wrapper
 
