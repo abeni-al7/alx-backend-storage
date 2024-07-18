@@ -43,4 +43,3 @@ def get_page(url: str) -> str:
     '''Get a page from a url'''
     response = requests.get(url)
     return response.text
-
